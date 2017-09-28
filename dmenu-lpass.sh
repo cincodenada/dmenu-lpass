@@ -1,9 +1,10 @@
 #!/bin/bash
 
 
-selection=`lpass ls | awk -F '[/[]' '$0 !~ /\/ \[id/ {gsub(/ $/,"",$(NF-1)); print $(NF-1)}' | dmenu -i`
+
+selection=`lpass ls -l | perl -ne 'if(/([^\/]+) \[id: (.*)\] \[username: (.*)\]/) { if($3) { print "$1 | $3\n"; } else { print "$1\n"; } }' | dmenu -i`
 
 echo "<$selection>"
 if [ "$selection" != "" ]; then
-    lpass show -c --password "$selection" &
+    lpass show -c --password "${selection% | *}" &
 fi
